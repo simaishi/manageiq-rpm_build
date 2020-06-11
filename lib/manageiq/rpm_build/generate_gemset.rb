@@ -122,10 +122,17 @@ module ManageIQ
         repos = AwesomeSpawn.run!(cmd, :chdir => miq_dir).output.split
 
         # license_finder tries to look for all supported package manager, move out Gemfile
-        repo_with_gemfile = repos.select { |repo| File.exist?("#{repo}/Gemfile") }
-        repo_with_gemfile.each { |repo| FileUtils.mv("#{repo}/Gemfile", "#{repo}/Gemfile.save") }
-        run_license_finder(repos.join(" "), "npm")
-        repo_with_gemfile.each { |repo| FileUtils.mv("#{repo}/Gemfile.save", "#{repo}/Gemfile") }
+        without_gemfiles(repos) do
+          run_license_finder(repos.join(" "), "npm")
+        end
+      end
+
+      def without_gemfiles(repos)
+        repos = repos.select { |repo| File.exist?("#{repo}/Gemfile") }
+        repos.each { |repo| FileUtils.mv("#{repo}/Gemfile", "#{repo}/Gemfile.save") }
+        yield
+      ensure
+        repos.each { |repo| FileUtils.mv("#{repo}/Gemfile.save", "#{repo}/Gemfile") }
       end
 
       def run_license_finder(repos, type)
