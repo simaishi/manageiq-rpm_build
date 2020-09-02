@@ -69,7 +69,10 @@ module ManageIQ
             shell_cmd("gem install unf_ext -v '0.0.7.2' -- --with-cxxflags='-fsigned-char'")
           end
 
-          shell_cmd("bundle config set --local with qpid_proton systemd")
+          bundle_config = ".bundle/config.release"
+          FileUtils.cp(bundle_config, bundle_config.chomp(".release") if File.exist?(bundle_config)
+          #FileUtils.ln_s(bundle_config, bundle_config.chomp(".release"), :force => true) if File.exist?(bundle_config)
+
           shell_cmd("bundle _#{bundler_version}_ install --jobs #{cpus} --retry 3")
 
           # Copy libsodium.so* to where rbnacl-libsodium expects
