@@ -1,10 +1,12 @@
-%global app_root /var/lib/manageiq
+%global product_summary PRODUCT_NAME Ansible virtual environmnent
+
+%global app_root VENV_ROOT
 %global _python_bytecompile_extra 0
 
-Name:     manageiq-ansible-venv
-Version:  1.0.0
+Name:     RPM_NAME
+Version:  VERSION
 Release:  1%{?dist}
-Summary:  ManageIQ Ansible Virtualenv
+Summary:  %{product_summary}
 License:  Apache-2.0
 URL:      https://github.com/ManageIQ/manageiq
 Source0:  %{name}-%{version}.tar.gz
@@ -13,7 +15,7 @@ AutoReqProv: no
 BuildRequires: /usr/bin/pathfix.py
 
 %description
-ManageIQ Ansible module virtual environmnent
+%{product_summary}
 
 %prep
 %setup -q

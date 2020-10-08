@@ -2,10 +2,13 @@ FROM registry.access.redhat.com/ubi8/ubi:8.2
 
 ARG ARCH=x86_64
 
-ENV NAME=manageiq-ansible-venv \
-    VERSION=1.0.0 \
+# For productization
+ENV PRODUCT_NAME=ManageIQ \
+    RPM_PREFIX=manageiq
+
+ENV RPM_SPEC=manageiq-ansible-venv.spec \
     VENV_ROOT=/var/lib/manageiq \
-    RPM_SPEC=manageiq-ansible-venv.spec
+    VERSION=1.0.0
 
 RUN dnf -y --disableplugin=subscription-manager install \
       http://mirror.centos.org/centos/8.2.2004/BaseOS/${ARCH}/os/Packages/centos-repos-8.2-2.2004.0.1.el8.${ARCH}.rpm \
