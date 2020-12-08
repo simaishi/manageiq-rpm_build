@@ -16,26 +16,30 @@ RUN if [ ${ARCH} != "s390x" ] ; then dnf -y install http://mirror.centos.org/cen
                    https://rpm.manageiq.org/release/12-lasker/el8/noarch/manageiq-release-12.0-1.el8.noarch.rpm && \
     dnf -y module enable ruby:2.6 && \
     dnf -y module enable nodejs:12 && \
-    dnf -y module disable virt:rhel && \
-    dnf -y group install "development tools" && \
     dnf config-manager --setopt=epel.exclude=*qpid-proton* --setopt=tsflags=nodocs --save && \
     dnf -y install \
       ansible \
       cmake \
       copr-cli \
       createrepo \
+      gcc \
+      gcc-c++ \
+      git-core \
       glibc-langpack-en \
       libcurl-devel \
       libpq-devel \
       libssh2-devel \
       libxml2-devel \
       libxslt-devel \
+      make \
       nodejs \
       openssl-devel \
       platform-python-devel \
       postgresql-server \
       postgresql-server-devel \
       qpid-proton-c-devel \
+      redhat-rpm-config \
+      rpm-build \
       ruby-devel \
       rubygem-bundler \
       sqlite-devel \
