@@ -1,0 +1,24 @@
+---
+bundler_version: 2.1.4
+compiled_gem_with_ext:  # Add gems only if 'ext' directory can be deleted
+  - bcrypt
+  - bcrypt_pbkdf
+  - byebug
+  - escape_utils
+  - ffi
+  - hamlit
+  - json
+  - linux_block_device
+  - memory_buffer
+  - nio4r
+  - nokogiri
+  - ovirt-engine-sdk
+  - pg
+  - psych
+  - puma
+  - qpid_proton
+  - rugged
+  - sqlite3
+  - surro-gate
+  - unf_ext
+  - websocket-driver

@@ -8,13 +8,16 @@ module ManageIQ
     class GenerateGemSet
       include Helper
 
-      attr_reader :current_env, :bundler_version, :manifest_dir, :miq_dir
+      attr_reader :current_env, :bundler_version, :manifest_dir, :miq_dir, :compiled_gems
 
       def initialize
         where_am_i
-        @bundler_version = OPTIONS.bundler_version
         @manifest_dir    = BUILD_DIR.join("manifest")
         @miq_dir         = BUILD_DIR.join("manageiq")
+
+        gem_options      = YAML.load_file(CONFIG_DIR.join("gems.yml"))
+        @bundler_version = gem_options["bundler_version"]
+        @compiled_gems   = gem_options["compiled_gem_with_ext"]
       end
 
       def backup_environment_variables
@@ -166,9 +169,6 @@ module ManageIQ
           # Remove files with inappropriate license
           FileUtils.rm_rf(Dir.glob("gems/pdf-writer-*/demo")) # Creative Commons Attribution NonCommercial
 
-          # Remove ffi ext directory, this causes rpm build failure
-          FileUtils.rm_rf(Dir.glob("gems/ffi-*/ext"))
-
           ["gems", "bundler/gems"].each do |path|
             FileUtils.rm_rf(Dir.glob("#{path}/**/*.o"))
             FileUtils.rm_rf(Dir.glob("#{path}/*/docs"))
@@ -178,11 +178,14 @@ module ManageIQ
           end
 
           # Remove extra files from manageiq-ui-classic
-          Dir.chdir(`BUNDLE_GEMFILE=#{miq_dir}/Gemfile bundle info --path manageiq-ui-classic`.chomp) do
+          Dir.chdir(find_gem_install_dir("manageiq-ui-classic")) do
             FileUtils.rm_rf("app/javascript/spec")
             FileUtils.rm_rf("app/javascript/tagging/tests")
             FileUtils.rm_rf("cypress")
           end
+
+          # Remove compiled gems' ext directory
+          compiled_gems.each { |gem_name| FileUtils.rm_rf("#{find_gem_install_dir(gem_name)}/ext") }
         end
       end
 
@@ -223,6 +226,10 @@ module ManageIQ
         csv.headers << "git_sha"
         csv.each { |row| row["git_sha"] = git_shas[row["name"]] }
         gem_manifest.write(csv.to_csv)
+      end
+
+      def find_gem_install_dir(gem_name)
+        `BUNDLE_GEMFILE=#{miq_dir}/Gemfile bundle info --path #{gem_name}`.chomp
       end
     end
   end
